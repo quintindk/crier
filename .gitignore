@@ -1,0 +1,25 @@
+# Build / test artefacts
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.ruff_cache/
+
+# Virtual envs
+.venv/
+venv/
+.env
+
+# Editor
+.vscode/
+.idea/
+
+# Model cache (when callers point CRIER_CACHE_DIR here)
+.crier-cache/
