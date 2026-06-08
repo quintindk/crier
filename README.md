@@ -159,16 +159,22 @@ llm = LLM.load(model="/path/to/onnx/bundle", accelerator="cpu")
 ```python
 from crier import list_presets
 print(list_presets())
-# [('llama-3.2-3b-instruct', 'cpu'),
-#  ('llama-3.2-3b-instruct', 'directml'),
-#  ('phi-3.5-mini-instruct', 'cpu'),
+# [('phi-3.5-mini-instruct', 'cpu'),
 #  ('phi-3.5-mini-instruct', 'cuda'),
 #  ('phi-3.5-mini-instruct', 'directml'),
-#  ('phi-3.5-mini-instruct', 'ryzenai'),
-#  ('qwen2.5-1.5b-instruct', 'cpu')]
+#  ('phi-3.5-mini-instruct', 'ryzenai')]
 ```
 
-Presets pin to Microsoft / AMD official ONNX repositories where possible. Crier never redistributes weights; you download from Hugging Face under each model's own licence.
+Presets pin to Microsoft / AMD official ONNX repositories. The Ryzen AI
+preset points at AMD's **gated** Hugging Face repo — you must accept the
+model card terms on huggingface.co and run `huggingface-cli login` before
+the download will succeed.
+
+The preset list is intentionally short — only combinations we've actually
+verified ship as presets. For anything else (other Phi variants, Llama,
+Qwen, Mistral), build a `ModelSpec` directly.
+
+Crier never redistributes weights; you download from Hugging Face under each model's own licence.
 
 ## Concurrency contract
 

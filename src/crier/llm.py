@@ -67,9 +67,23 @@ def _download_model(spec: ModelSpec) -> Path:
         cache_dir=str(cache_dir),
         allow_patterns=allow_patterns,
     )
-    if spec.subfolder is not None:
-        return Path(snapshot_path) / spec.subfolder
-    return Path(snapshot_path)
+    resolved = (
+        Path(snapshot_path) / spec.subfolder
+        if spec.subfolder is not None
+        else Path(snapshot_path)
+    )
+    # snapshot_download will happily return a path even when allow_patterns
+    # matched zero files; the directory then exists but is empty. Catch
+    # that here instead of failing later with a confusing "cannot open
+    # genai_config.json" message.
+    if not resolved.exists() or not any(resolved.iterdir()):
+        raise ModelNotFoundError(
+            f"Downloaded snapshot for {spec.name!r} on backend {spec.backend!r} "
+            f"is empty at {resolved}. The subfolder {spec.subfolder!r} may not "
+            f"exist in repo {spec.repo_id!r}, or allow_patterns "
+            f"{allow_patterns!r} matched nothing. Check the HF repo layout."
+        )
+    return resolved
 
 
 @dataclass

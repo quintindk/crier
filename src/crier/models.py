@@ -86,7 +86,9 @@ class ModelSpec:
 # at resolution time with a clear "build your own ModelSpec" message.
 
 _PRESETS: dict[tuple[str, str], ModelSpec] = {
-    # Phi-3.5 mini — Microsoft official ONNX bundle, CPU/DirectML/CUDA
+    # Phi-3.5 mini — Microsoft official ONNX bundle.
+    # Repo layout has two subfolders: cpu_and_mobile/ and gpu/. The "gpu"
+    # bundle is consumed by both DirectML and CUDA EPs.
     ("phi-3.5-mini-instruct", "cpu"): ModelSpec(
         name="phi-3.5-mini-instruct",
         backend="cpu",
@@ -98,45 +100,30 @@ _PRESETS: dict[tuple[str, str], ModelSpec] = {
         name="phi-3.5-mini-instruct",
         backend="directml",
         repo_id="microsoft/Phi-3.5-mini-instruct-onnx",
-        subfolder="directml/directml-int4-awq-block-128",
+        subfolder="gpu/gpu-int4-awq-block-128",
         quantization="int4-awq",
+        notes="Microsoft 'gpu' bundle, consumed by DirectML EP.",
     ),
     ("phi-3.5-mini-instruct", "cuda"): ModelSpec(
         name="phi-3.5-mini-instruct",
         backend="cuda",
         repo_id="microsoft/Phi-3.5-mini-instruct-onnx",
-        subfolder="cuda/cuda-int4-awq-block-128",
+        subfolder="gpu/gpu-int4-awq-block-128",
         quantization="int4-awq",
+        notes="Microsoft 'gpu' bundle, consumed by CUDA EP.",
     ),
-    # Phi-3.5 mini — AMD hybrid (NPU prefill + iGPU decode) for Ryzen AI 300
+    # Phi-3.5 mini — AMD hybrid (NPU prefill + iGPU decode) for Ryzen AI 300.
+    # The AMD HF repo is gated; users must `huggingface-cli login` and
+    # accept the model card terms on huggingface.co first.
     ("phi-3.5-mini-instruct", "ryzenai"): ModelSpec(
         name="phi-3.5-mini-instruct",
         backend="ryzenai",
         repo_id="amd/Phi-3.5-mini-instruct-awq-asym-uint4-g128-lmhead-onnx-hybrid",
         quantization="int4-awq-hybrid",
-        notes="Requires Ryzen AI SW 1.3+ with NPU driver. Hybrid NPU+iGPU.",
-    ),
-    # Llama 3.2 3B — Microsoft official ONNX
-    ("llama-3.2-3b-instruct", "cpu"): ModelSpec(
-        name="llama-3.2-3b-instruct",
-        backend="cpu",
-        repo_id="onnx-community/Llama-3.2-3B-Instruct-ONNX",
-        subfolder="cpu_and_mobile/cpu-int4-rtn-block-32-acc-level-4",
-        quantization="int4-rtn",
-    ),
-    ("llama-3.2-3b-instruct", "directml"): ModelSpec(
-        name="llama-3.2-3b-instruct",
-        backend="directml",
-        repo_id="onnx-community/Llama-3.2-3B-Instruct-ONNX",
-        subfolder="directml/directml-int4-awq-block-128",
-        quantization="int4-awq",
-    ),
-    # Qwen 2.5 1.5B — small, fast, multilingual
-    ("qwen2.5-1.5b-instruct", "cpu"): ModelSpec(
-        name="qwen2.5-1.5b-instruct",
-        backend="cpu",
-        repo_id="onnx-community/Qwen2.5-1.5B-Instruct",
-        quantization="fp16",
+        notes=(
+            "Gated AMD repo — accept terms on HF and run `huggingface-cli login`. "
+            "Requires Ryzen AI SW 1.3+ with XDNA driver. Hybrid NPU+iGPU."
+        ),
     ),
 }
 
