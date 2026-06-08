@@ -11,6 +11,7 @@ from __future__ import annotations
 import importlib
 from pathlib import Path
 
+from .._cpu_info import detect_xdna_generation
 from .._ort_adapter import RuntimeAdapter, load_runtime
 from ..backend import Backend, BackendCapability
 
@@ -26,6 +27,15 @@ class RyzenAIBackend(Backend):
     )
 
     def _probe_runtime(self) -> tuple[bool, str]:
+        xdna = detect_xdna_generation()
+        if xdna == "xdna1":
+            return (
+                False,
+                "Detected XDNA 1 NPU (Ryzen 7040/8040 'Phoenix'/'Hawk Point'). "
+                "Current AMD Ryzen AI Software LLM path requires XDNA 2 "
+                "(Ryzen AI 300 series 'Strix Point' or 'Strix Halo'). "
+                "Use the 'directml' backend on the integrated Radeon GPU instead.",
+            )
         try:
             ort = importlib.import_module("onnxruntime")
         except ImportError:
@@ -35,7 +45,7 @@ class RyzenAIBackend(Backend):
             return (
                 False,
                 "VitisAIExecutionProvider not exposed by onnxruntime. "
-                "Install Ryzen AI SW + XDNA driver.",
+                "Install Ryzen AI SW 1.7+ and the matching XDNA driver.",
             )
         return True, "VitisAI EP registered."
 
