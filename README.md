@@ -17,12 +17,16 @@ Crier is a **library** consumed in-process. It is intentionally *not* a service.
 | `cpu` | Win / Linux / macOS | `CPUExecutionProvider` | `crier[cpu]` | Universal fallback. |
 | `directml` | Windows | `DmlExecutionProvider` | `crier[directml]` | Generic Windows GPU/NPU (any vendor). |
 | `coreml` | macOS | `CoreMLExecutionProvider` | `crier[coreml]` | Apple Silicon / Apple Neural Engine. |
-| `ryzenai` | Windows / Linux | `VitisAIExecutionProvider` | `crier[ryzenai]` | AMD Ryzen AI 300 series (XDNA 2 NPU). |
+| `ryzenai` | Windows / Linux | `VitisAIExecutionProvider` | `crier[ryzenai]` | AMD **XDNA 2** NPUs only (Ryzen AI 300 series 'Strix Point' / Strix Halo). |
 | `openvino` | Windows / Linux | `OpenVINOExecutionProvider` | `crier[openvino]` | Intel Core Ultra (NPU + iGPU). |
 | `qnn` | Windows / Linux | `QNNExecutionProvider` | `crier[qnn]` | Qualcomm Snapdragon X. |
 | `cuda` | Windows / Linux | `CUDAExecutionProvider` | `crier[cuda]` | Discrete NVIDIA GPU (not an NPU, included for symmetry). |
 
 **Important caveat.** `pip install crier[ryzenai]` installs the Python wheel; it does **not** install the XDNA driver or the AMD Ryzen AI Software stack. The same is true for Intel NPU drivers and Qualcomm QNN runtime. Run `crier doctor` after install to see what's missing on your host — it will tell you which Python package is present, which provider is registered, and what to install next.
+
+**XDNA generations.** The `ryzenai` backend only targets **XDNA 2** silicon — Ryzen AI 300 series ('Strix Point' / 'Strix Halo' / 'Krackan'). Older Ryzen 7040 ('Phoenix') and 8040 ('Hawk Point') chips ship XDNA 1, which has no shipping ORT GenAI LLM path. `crier doctor` detects this and tells you upfront; use the `directml` backend on the iGPU instead.
+
+**Validation status.** CPU and DirectML backends are validated end-to-end on Phi-3.5-mini. The `ryzenai` backend code is implemented but **awaiting hardware validation** on XDNA 2 silicon. Bug reports from XDNA 2 users very welcome.
 
 ## Install
 
